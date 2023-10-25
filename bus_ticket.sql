@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Aug 06, 2019 at 08:20 PM
--- Server version: 10.1.37-MariaDB
--- PHP Version: 7.2.12
+-- Host: localhost
+-- Generation Time: Oct 25, 2023 at 08:46 PM
+-- Server version: 10.4.25-MariaDB
+-- PHP Version: 8.1.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -26,6 +25,9 @@ SET time_zone = "+00:00";
 
 --
 -- Table structure for table `buses`
+
+CREATE DATABASE IF NOT EXISTS bus_ticket;
+USE bus_ticket;
 --
 
 CREATE TABLE `buses` (
@@ -38,7 +40,7 @@ CREATE TABLE `buses` (
   `to_loc` varchar(20) NOT NULL,
   `to_time` varchar(8) NOT NULL,
   `fare` int(5) NOT NULL,
-  `approved` tinyint(1) NOT NULL DEFAULT '0'
+  `approved` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -46,9 +48,8 @@ CREATE TABLE `buses` (
 --
 
 INSERT INTO `buses` (`id`, `bname`, `bus_no`, `owner_id`, `from_loc`, `from_time`, `to_loc`, `to_time`, `fare`, `approved`) VALUES
-(1, 'Hanif', 'NM-12456', 3, 'Naogaon', '10:30 PM', 'Dhaka', '05:00 AM', 500, 1),
-(2, 'Hanif', 'NM-12456', 3, 'Dhaka', '09:45 PM', 'Naogaon', '04:15 AM', 500, 0),
-(4, 'Himachal', 'BD-123456', 3, 'Dhaka', '10:30 AM', 'Rajshahi', '4:30 PM', 700, 0);
+(7, 'Transporte 1', '1', 11, 'Nampula', '10:30', 'Beira', '21:30', 2900, 1),
+(8, 'Transporte 2', '2', 11, 'Maputo', '04:30', 'Beira', '12:30', 1500, 1);
 
 -- --------------------------------------------------------
 
@@ -60,7 +61,7 @@ CREATE TABLE `earnings` (
   `id` int(5) NOT NULL,
   `bus_id` int(5) NOT NULL,
   `date` varchar(10) NOT NULL,
-  `ssold` int(3) NOT NULL DEFAULT '0'
+  `ssold` int(3) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -79,10 +80,20 @@ CREATE TABLE `locations` (
 --
 
 INSERT INTO `locations` (`id`, `name`) VALUES
-(1, 'Dhaka'),
-(2, 'Naogaon'),
-(3, 'Chittagong'),
-(4, 'Rajshahi');
+(5, 'Beira'),
+(6, 'Nampula'),
+(7, 'Maputo'),
+(8, 'Pemba'),
+(9, 'Quelimane'),
+(10, 'Chimoio'),
+(11, 'Lichinga'),
+(12, 'Cuamba'),
+(13, 'Dondo'),
+(14, 'Nacala'),
+(15, 'Matola'),
+(16, 'Xai-Xai'),
+(17, 'Inhambane'),
+(18, 'Tete');
 
 -- --------------------------------------------------------
 
@@ -118,12 +129,7 @@ CREATE TABLE `tickets` (
 --
 
 INSERT INTO `tickets` (`id`, `passenger_id`, `bus_id`, `jdate`, `seats`, `fare`) VALUES
-(9, 2, 2, '04/08/2019', 'a:2:{i:0;s:2:\"D1\";i:1;s:2:\"D2\";}', 1050),
-(11, 2, 2, '05/08/2019', 'a:1:{i:0;s:2:\"E1\";}', 1050),
-(24, 2, 2, '06/08/2019', 'a:2:{i:0;s:2:\"D3\";i:1;s:2:\"D4\";}', 550),
-(25, 2, 2, '06/08/2019', 'a:1:{i:0;s:2:\"E4\";}', 550),
-(26, 5, 2, '06/08/2019', 'a:2:{i:0;s:2:\"C3\";i:1;s:2:\"C4\";}', 1050),
-(27, 2, 2, '07/08/2019', 'a:2:{i:0;s:2:\"E1\";i:1;s:2:\"E2\";}', 1050);
+(30, 12, 7, '26/10/2023', 'a:1:{i:0;s:2:\"D3\";}', 2950);
 
 -- --------------------------------------------------------
 
@@ -148,11 +154,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `uname`, `name`, `email`, `password`, `gender`, `utype`, `address`, `mobile`) VALUES
-(1, 'admin', 'Admin', '----', 'admin', 'Male', 'Admin', '----', '0'),
-(2, 'deba', 'Debashish Sarker', 'dsarker333@gmail.com', '123456', 'Male', 'Passenger', '', '1000000000'),
-(3, 'oni', 'Onimesh', 'osarker@gmail.com', '123456', 'Male', 'Owner', '', '0000000000'),
-(4, 'hori', 'Habibur Hori', 'habiburaiub@gmail.com', '123456', 'Male', 'Owner', 'Kuril, Dhaka', '1700000000'),
-(5, 'rubel', 'Rubel', 'rubelmhr@gmail.com', '123456', 'Male', 'Passenger', 'Kuril', '1722222222');
+(10, 'admin', 'Admin', 'admin@gmail.com', '123456', 'Female', 'Admin', 'Beira,Matacuane', '848499111'),
+(11, 'proprietario', 'Teste', 'proprietario@gmail.com', '123456', 'Male', 'Owner', 'Beira,Macuti', '878799140'),
+(12, 'passageiro', 'teste', 'passageiro@gmail.com', '123456', 'Female', 'Passenger', 'Nampula', '848499142');
 
 --
 -- Indexes for dumped tables
@@ -209,7 +213,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `buses`
 --
 ALTER TABLE `buses`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `earnings`
@@ -221,7 +225,7 @@ ALTER TABLE `earnings`
 -- AUTO_INCREMENT for table `locations`
 --
 ALTER TABLE `locations`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `notices`
@@ -233,13 +237,13 @@ ALTER TABLE `notices`
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables
