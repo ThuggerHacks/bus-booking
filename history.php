@@ -47,6 +47,7 @@ t_sidebar();
                                 <li class="list-group-item">Data da Viagem: ' . $row["jdate"] . '</li>
                                 <li class="list-group-item">Preço: ' . $row["fare"] . '</li>
                                 <li class="list-group-item">Número de Assentos: ' . count(unserialize($row["seats"])) . '</li>
+                                <li class="list-group-item">Lugares: ' . $row["seats"] . '</li>
                             </ul>
                         </div>
                     </div>

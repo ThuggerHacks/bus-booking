@@ -99,8 +99,8 @@ switch ($_GET['type']) {
             <div class="col-md-6">
             Numero do transporte.: '.$businfo['bus_no'].'<br/>
             Data da viagem: '.$date.'<br/>
-            Pre&ccedil;o: <span id="fare">' . (($fare == 0) ? '0' : ($fare-50)).  '</span> Mt<br/>
-            Carga: 50 Kg<br/>
+            Pre&ccedil;o: <span id="fare">' . (($fare == 0) ? '0' : ($fare)).  '</span> Mt<br/>
+            Carga: 60MT/Kg<br/>
             Total: <span id="total">'.$fare.'</span> Mt
             </div>
             </div>
@@ -120,10 +120,10 @@ switch ($_GET['type']) {
                 function() {
                     let sts = $("input[type=checkbox]:checked").length;
                     $("#fare").html(sts*'.$businfo['fare'].');
-                    $("#total").html(sts*'.$businfo['fare'].'+50);
+                    $("#total").html(sts*'.$businfo['fare'].');
                     let total = 0;
                     if (sts != 0)
-                        total = sts*'.$businfo['fare'].'+50;
+                        total = sts*'.$businfo['fare'].';
                     $("#ifare").val(total);
                 }
             );

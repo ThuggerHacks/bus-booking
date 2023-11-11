@@ -1,179 +1,151 @@
 <?php
-$acc = "";
-session_start();
-
-if (isset($_GET['logout'])) {
-    session_destroy();
-} elseif (isset($_SESSION['user'])) {
-    if ($_SESSION['user']['utype'] == "Passenger") {
-        header("location: buy_ticket.php");
-    } elseif ($_SESSION['user']['utype'] == "Owner") {
-        header("location: my_buses.php");
-    } elseif ($_SESSION['user']['utype'] == "Admin") {
-        header("location: users.php");
-    } else {
-        header("location: logout.php");
-    }
-} elseif (isset($_POST['signup'])) {
-    require_once 'inc/database.php';
-
-    if ($_POST['name'] != "" && $_POST['uname'] != "" && $_POST['email'] != "" && $_POST['password'] != "") {
-        $conn = initDB();
-        $sql = "insert into users (name, uname, email, password, gender, utype, address, mobile) values ('";
-        $sql .= $_POST['name'] . "','" . $_POST['uname'] . "','" . $_POST['email'] . "','" . $_POST['password'] . "','";
-        $sql .= $_POST['gender'] . "','" . $_POST['utype'] . "','" . $_POST['address'] . "','" . $_POST['mobile'] . "')";
-
-        if ($conn->query($sql)) {
-            $acc = "ok";
-        } else {
-            $acc = $sql . "<br/>" . $conn->error;
-        }
-        $conn->close();
-    } else {
-       // header("location: index.php");
-    }
-} elseif (isset($_POST['login'])) {
-    require_once 'inc/database.php';
-    $conn = initDB();
-    $res = $conn->query("select id,utype from users where uname='" . $_POST['uname'] . "' and password='" . $_POST['upass'] . "'");
-    if ($res->num_rows == 0)
-        $acc = "Dados incorrectos";
-    else {
-        $data = $res->fetch_assoc();
-        $_SESSION['user'] = array('id' => $data['id'], 'uname' => $_POST['uname'], 'utype' => $data['utype']);
-        header("Location: index.php");
-    }
-    $conn->close();
-} else {}
 include 'inc/basic_template.php';
-t_header("Agendamento de bilhetes");
+t_header("Agendamento de Bilhetes");
 t_navbar();
 ?>
 
-<div class="d-flex justify-content-center align-items-center min-vh-100">
-    <div class="card" style="width: 28rem;">
-        <div class="card-body">
-            <?php
-            if ($acc != "") {
-                if ($acc == "ok") {
-                    echo '<div class="alert alert-success text-center my-2">Conta criada com sucesso!</div>';
-                } else {
-                    echo '<div class="alert alert-danger text-center my-2">Erro: Houve um problema</div>';
-                }
-            }
-            ?>
+<style>
+  /* Add your styles for the Landing Page */
+  .landing-slider {
+    position: relative;
+    overflow: hidden;
+    height: 500px;
+  }
 
-            <form action="index.php" method="post">
-                <h4 class="my-3">Criar conta</h4>
-                <hr>
-                <div class="form-group row">
-                    <label for="uname" class="col-sm-3 col-form-label">Nome de usuário</label>
-                    <div class="col-sm-9">
-                        <input name="uname" type="text" class="form-control" id="inputUname" placeholder="Nome" />
-                    </div>
-                    <div class="col-sm-3" id="infoUname"></div>
-                </div>
-                <div class="form-group row">
-                    <label for="name" class="col-sm-3 col-form-label">Sobrenome</label>
-                    <div class="col-sm-9">
-                        <input name="name" type="text" class="form-control" id="inputName" placeholder="Sobrenome" />
-                    </div>
-                    <div class="col-sm-3" id="infoName"></div>
-                </div>
-                <div class="form-group row">
-                    <label for="email" class="col-sm-3 col-form-label">Email</label>
-                    <div class="col-sm-9">
-                        <input name="email" type="text" class="form-control" id="inputEmail" placeholder="Email" />
-                    </div>
-                    <div class="col-sm-3" id="infoEmail"></div>
-                </div>
-                <div class="form-group row">
-                    <label for="upass" class="col-sm-3 col-form-label">Senha</label>
-                    <div class="col-sm-9">
-                        <input name="password" type="password" class="form-control" id="inputPassword" placeholder="Senha">
-                    </div>
-                    <div class="col-sm-3" id="infoPass"></div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-form-legend col-sm-3" for="gender">Gênero</label>
-                    <div class="col-sm-9 px-5">
-                        <input class="form-check-input" type="radio" name="gender" id="radioMale" value="1" checked> Masculino <br/>
-                        <input class="form-check-input" type="radio" name="gender" id="radioFemale" value="2"> Feminino
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-form-legend col-sm-3" for="utype">Tipo de usuário</label>
-                    <div class="col-sm-9 px-5">
-                        <input class="form-check-input" type="radio" name="utype" id="radioPass" value="3" checked> Passageiro <br/>
-                        <input class="form-check-input" type="radio" name="utype" id="radioBO" value="2"> Proprietário do transporte
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="address" class="col-sm-3 col-form-label">Endereço</label>
-                    <div class="col-sm-9">
-                        <input name="address" type="text" class="form-control" id="inputAddress" placeholder="Endereço" />
-                    </div>
-                    <div class="col-sm-3" id="infoAddress"></div>
-                </div>
+  .slider-container {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+  }
 
-                <!-- <script type="text/javascript">
-                    var autocomplete;
+  .slider-content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-                    function initialize() {
-                        autocomplete = new google.maps.places.Autocomplete(document.getElementById("inputAddress"));
-                        autocomplete.setComponentRestrictions({'country': 'bd'});
-                        google.maps.event.addListener(autocomplete, 'place_changed', function() {});
-                    }
-                </script> -->
-                <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initialize" async defer></script>
-                <div class="form-group row">
-                    <label for="mobile" class="col-sm-3 col-form-label">Celular</label>
-                    <div class="col-sm-9 input-group">
-                        <span class="input-group-addon">+258</span>
-                        <input name="mobile" type="text" class="form-control" id="inputMobile" placeholder="Número de celular" />
-                    </div>
-                    <div class="col-sm-3" id="infoMobile"></div>
-                </div>
-                <div class="form-group row">
-                    <div class="offset-sm-3 col-sm-9">
-                        <button type="submit" class="btn btn-success" name="signup">Registrar</button>
-                    </div>
-                </div>
-                <script async>
-                    $("#inputUname").keyup(function() {
-                        $.ajax({
-                            url: "inc/ajax.php?type=username&q=" + $(this).val(),
-                            success: function(result) {
-                                $("#infoUname").html(result);
-                            }
-                        });
-                    });
-                    $("#inputName").keyup(function() {
-                        if ($(this).val().match('^[a-zA-Z ]{3,16}$')) {
-                            $("#infoName").html(' ');
-                        } else {
-                            $("#infoName").html('<span class="text-danger">Nome inválido</span>');
-                        }
-                    });
-                    $("#inputEmail").keyup(function() {
-                        $.ajax({
-                            url: "inc/ajax.php?type=email&q=" + $(this).val(),
-                            success: function(result) {
-                                $("#infoEmail").html(result);
-                            }
-                        });
-                    });
-                    $("#inputPassword").keyup(function() {
-                        if ($(this).val().length >= 6) {
-                            $("#infoPass").html(' ');
-                        } else {
-                            $("#infoPass").html('<span class="text-danger">Senha fraca</span>');
-                        }
-                    });
-                </script>
-            </form>
-        </div>
+  .slider-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    filter:brightness(50%)
+  }
+
+  .slide-description {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #ffffff;
+    max-width: 60%;
+  }
+
+  .faq-section,
+  .partners-section,
+  .info-cards-section {
+    background-color: #f8f9fa;
+    padding: 50px 0;
+  }
+
+  .faq-item {
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .partners-logo {
+    max-width: 100%;
+    height: auto;
+    filter: grayscale(100%);
+    transition: filter 0.3s ease-in-out;
+  }
+
+  .partners-logo:hover {
+    filter: grayscale(0%);
+  }
+
+  .info-card {
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+</style>
+
+<div class="landing-slider">
+  <div class="slider-container">
+    <!-- Slide 1 -->
+    <div class="slider-content">
+      <img class="slider-image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/YT23HYH_at_Tyndrum.jpg/800px-YT23HYH_at_Tyndrum.jpg" alt="Bus Image 4">
+      <div class="slide-description">
+        <h2>Viagens Confortáveis</h2>
+        <p>Desfrute de viagens confortáveis em nossos modernos ônibus equipados com comodidades de última geração.</p>
+      </div>
     </div>
+  </div>
+</div>
+
+<div class="faq-section">
+  <div class="container">
+    <h2 class="mb-4">Perguntas Frequentes</h2>
+    <div class="faq-item">
+      <h3>Como posso fazer uma reserva?</h3>
+      <p>Para fazer uma reserva, basta acessar nosso site, selecionar o destino desejado, escolher a data e número de passageiros, e seguir as instruções de pagamento.</p>
+    </div>
+    <div class="faq-item">
+      <h3>É possível cancelar ou alterar uma reserva?</h3>
+      <p>Sim, é possível cancelar ou alterar sua reserva antes da data de partida. Consulte nossa política de cancelamento para obter mais informações.</p>
+    </div>
+    <!-- Add more FAQ items as needed -->
+  </div>
+</div>
+
+<div class="partners-section">
+  <div class="container">
+    <h2 class="mb-4">Nossos Parceiros</h2>
+    <div class="d-flex justify-content-around">
+      <span>NAGI</span>
+      <span>CITY LINK</span>
+      <span>VODACOM</span>
+    </div>
+  </div>
+</div>
+
+<div class="info-cards-section">
+  <div class="container">
+    <h2 class="mb-4">Informações Importantes</h2>
+    <div class="row">
+      <!-- Info Card 1 -->
+      <div class="col-md-4">
+        <div class="info-card">
+          <h3>Número de Ônibus Disponíveis</h3>
+          <p>Atualmente, temos uma frota de <?php
+          require_once 'inc/database.php';
+          $conn = initDB();
+          $res = $conn->query("select count(id) from buses ")->fetch_assoc();
+          echo $res["count(id)"];
+          ?> ônibus disponíveis para atender às suas necessidades de viagem.</p>
+        </div>
+      </div>
+      <!-- Info Card 2 -->
+      <div class="col-md-4">
+        <div class="info-card">
+          <h3>Destinos Cobertos</h3>
+          <p>Nossos ônibus viajam para uma variedade de destinos em todo o país, garantindo que você possa chegar onde precisa ir.</p>
+        </div>
+      </div>
+      <!-- Info Card 3 -->
+      <div class="col-md-4">
+        <div class="info-card">
+          <h3>Atendimento ao Cliente</h3>
+          <p>Nossa equipe de atendimento ao cliente está disponível 24 horas por dia, 7 dias por semana, para ajudar com suas dúvidas e preocupações.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <?php

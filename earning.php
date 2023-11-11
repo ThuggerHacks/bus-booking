@@ -17,6 +17,8 @@ t_owner_sidebar();
         require_once 'inc/database.php';
         $conn = initDB();
         $res = $conn->query("select jdate,bus_id, b.bname, b.from_loc,b.to_loc,b.from_time, sum(t.fare) as earn from tickets t, buses b where t.bus_id = b.id and b.owner_id = " . $_SESSION['user']['id'] . " group by(jdate)");
+
+
         if ($res->num_rows == 0) {
             echo '<h4 class="col-md-12 text-center">Histórico de ganhos vazio</h4>';
         } else {

@@ -73,12 +73,13 @@ function t_navbar() {
     echo '
     <div class="navbar fixed-top navbar-default header" style="background-color: #your-color-code; height: 60px;">
     <div class="container-fluid">
-        <h3>TRANSPORTER</h3>
+        <a href="index.php" style="color:#fff;text-decoration:none;"><h3>TRANSPORTER</h3></a>
         <div class="navbar-right">
-            <form action="index.php" method="post" class="form-inline">
+            <form action="index2.php" method="post" class="form-inline">
                 <input type="text" name="uname" placeholder="Nome de usuario" class="form-control-sm mr-1"/>
                 <input type="password" name="upass" placeholder="Senha" class="form-control-sm mr-1"/>
                 <input type="submit" name="login" value="Entrar" class="btn btn-success btn-sm"/>
+                &nbsp;<a href="index2.php" class="btn btn-success btn-sm">Cadastrar-se</a>
             </form>
         </div>
     </div>
@@ -89,7 +90,7 @@ function t_login_nav() {
     echo '
     <div class="navbar fixed-top navbar-default header" style="background-color: #your-color-code; height: 60px;">
     <div class="container-fluid">
-        <h3>TRANSPORTER</h3>
+    <a href="index.php" style="color:#fff;text-decoration:none;"><h3>TRANSPORTER</h3></a>
         <div class="navbar-right">
             Bem-vindo, '.$_SESSION['user']['uname'].' <a href="logout.php"><button class="btn btn-success btn-sm">Sair</button></a>
         </div>
@@ -97,7 +98,6 @@ function t_login_nav() {
     </div>';
 }
 
-// Other functions remain the same
 
 function t_sidebar() {
     $file = basename($_SERVER['PHP_SELF'],'.php');
@@ -154,27 +154,39 @@ function t_footer() {
     </div>
 </div>
 <div class="footer">
-    <div class="row p-4">
-        <div class="col-md-4">Sistema de agendamento de transportes públicos para viagens curtas e longas<br/>&copy; '.date("Y").' - Todos os direitos reservados</div>
-        <div class="col-md-4 text-center">
-        <ul class="list-null">
-            <li><a href="#">Sobre nós</a></li>
-            <li><a href="#">Contate-nos</a></li>
-            <li><a href="#">Termos e condições</a></li>
-            <li><a href="#">Política de privacidade</a></li>
-        </ul>
+    <div class="container p-4">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <p>Contacte-nos:</p>
+                <p>Email: contato@transporter.com</p>
+                <p>Telefone: +258 84 563 0579</p>
+                <p>Endereço: Rua Alfredo Lawley - Matacuene,Beira</p>
+            </div>
+            <div class="col-md-4 mb-4 text-center">
+                <ul class="list-null">
+                    <li><a href="about.php">Sobre nós</a></li>
+                    <li><a href="contact.php">Contacte-nos</a></li>
+                    <li><a href="terms.php">Termos e condições</a></li>
+                    <li><a href="policy.php">Política de privacidade</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4 text-center text-light">
+                <p>Siga-nos nas redes sociais:</p>
+                <ul class="list-inline">
+                    <li class="list-inline-item"><a target="_blank" href="//facebook.com/#"><i class="fa fa-facebook"></i></a></li>
+                    <li class="list-inline-item"><a target="_blank" href="//www.instagram.com/#"><i class="fa fa-instagram"></i></a></li>
+                    <li class="list-inline-item"><a target="_blank" href="//www.linkedin.com/#"><i class="fa fa-linkedin"></i></a></li>
+                    <li class="list-inline-item"><a target="_blank" href="//twitter.com/#"><i class="fa fa-twitter"></i></a></li>
+                </ul>
+            </div>
         </div>
-        <div class="col-md-4 text-center text-light">
-            <ul class="list-null">
-                <li><a target="_blank" href="//facebook.com/#"><i class="fa fa-facebook"></i></a></li>
-                <li><a target="_blank" href="//www.instagram.com/#"><i class="fa fa-instagram"></i></a></li>
-                <li><a target="_blank" href="//www.linkedin.com/#"><i class="fa fa-linkedin"></i></a></li>
-                <li><a target="_blank" href="//twitter.com/#"><i class="fa fa-twitter"></i></a></li>
-            </ul>
+        <div class="row">
+            <div class="col-md-12 text-center text-muted">
+                <p>&copy; Transporter '.date("Y").' - Todos os direitos reservados</p>
+            </div>
         </div>
     </div>
 </div>
 </body>
 </html>';
 }
-?>

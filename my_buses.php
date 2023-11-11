@@ -23,7 +23,7 @@ t_login_nav();
 t_owner_sidebar();
 ?>
 
-<div class="modal" tabindex="-1" role="dialog" style="display: <?php echo ($_GET['act'] == 'add') ? 'block' : 'none';?>">
+<div class="modal" tabindex="-1" role="dialog" style="display: <?php echo ($_GET['act'] == 'add') ? 'block' : 'none';?>;max-height:670px;overflow:auto">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -111,7 +111,17 @@ if ($add!="") {
     if ($res->num_rows == 0) {
         echo '<div class="col-md-12 text-center">Sem transportes</div>';
     } else {
+        $mostSelled = 0;
+        $item = [];
         while ($row = $res->fetch_assoc()) {
+            $r1 = $conn->query("SELECT sum(fare) from tickets WHERE bus_id = ".$row["id"])->fetch_assoc();
+            $r2 = $conn->query("SELECT count(fare) from tickets WHERE bus_id = ".$row["id"])->fetch_assoc();
+            $r3 = $conn->query("SELECT seats from tickets WHERE bus_id = ".$row["id"]);
+
+            if($mostSelled < $r2["count(fare)"]){
+                $mostSelled =  $r2["count(fare)"];
+                $item = $row;
+            }
             echo '
             <div class="col-md-4 mb-4">
                 <div class="card">
@@ -123,17 +133,44 @@ if ($add!="") {
                             <strong>Hora de partida:</strong> ' . $row["from_time"] . '<br>
                             <strong>Para:</strong> ' . $row["to_loc"] . '<br>
                             <strong>Hora de chegada:</strong> ' . $row["to_time"] . '<br>
-                            <strong>Valor:</strong> ' . $row["fare"] . '<br>
+                            <strong>Valor:</strong> ' . $row["fare"] . 'MT<br>
+                            <strong>Total Coletado:</strong> ' . ($r1["sum(fare)"] ? $r1["sum(fare)"]."MT":"0MT") . '<br>
+                            <strong>Total de Acentos Reservados:</strong> ' . (intval($r1["sum(fare)"]/$row["fare"])) . '<br>
                             <strong>Estado:</strong> ' . (($row["approved"]) ? '<span class="text-success">Aprovado</span>' : '<span class="text-danger">Rejeitado</span>') . '
+                           
                         </p>
                     </div>
                 </div>
             </div>';
         }
+
+        
     }
     $conn->close();
     ?>
 </div>
+<?php
+
+echo "<hr/><div style='display:flex;align-items:center'><h4>Mais Vendido </h4><small>&nbsp;(".$mostSelled." Bilhetes vendidos)</small> </div><hr/>";
+        echo '
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">' . $item["bname"] . '</h5>
+                        <p class="card-text">
+                            <strong>Numero de transporte:</strong> ' . $item["bus_no"] . '<br>
+                            <strong>Apartir de:</strong> ' . $item["from_loc"] . '<br>
+                            <strong>Hora de partida:</strong> ' . $item["from_time"] . '<br>
+                            <strong>Para:</strong> ' . $item["to_loc"] . '<br>
+                            <strong>Hora de chegada:</strong> ' . $item["to_time"] . '<br>
+                            <strong>Valor:</strong> ' . $item["fare"] . 'MT<br>
+                            <strong>Estado:</strong> ' . (($item["approved"]) ? '<span class="text-success">Aprovado</span>' : '<span class="text-danger">Rejeitado</span>') . '
+                           
+                        </p>
+                    </div>
+                </div>
+            </div>';
+?>
 </div>
 <?php
 t_footer();
